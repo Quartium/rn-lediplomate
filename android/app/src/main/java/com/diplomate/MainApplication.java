@@ -3,6 +3,7 @@ package com.diplomate;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.RNFirebasePackage;
 import com.reactnativenavigation.bridge.NavigationReactPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -14,7 +15,10 @@ import java.util.List;
 
 import com.reactnativenavigation.NavigationApplication;
 import com.oblador.vectoricons.VectorIconsPackage;
-import io.realm.react.RealmReactPackage;
+import io.realm.react.RealmReactPackage;import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+
 
 public class MainApplication extends NavigationApplication {
 
@@ -29,9 +33,12 @@ public class MainApplication extends NavigationApplication {
          // No need to add RnnPackage and MainReactPackage
          return Arrays.<ReactPackage>asList(
              new MainReactPackage(),
-            new VectorIconsPackage(),
-            new NavigationReactPackage(),
-            new RealmReactPackage()
+             new RNFirebasePackage(),
+             new VectorIconsPackage(),
+             new NavigationReactPackage(),
+             new RealmReactPackage(),
+             new RNFirebaseMessagingPackage(),
+             new RNFirebaseNotificationsPackage()
          );
      }
 
