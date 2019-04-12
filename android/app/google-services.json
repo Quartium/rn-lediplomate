@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1051014026822",
+    "firebase_url": "https://rn-lediplomate.firebaseio.com",
+    "project_id": "rn-lediplomate",
+    "storage_bucket": "rn-lediplomate.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1051014026822:android:26f1684b0c6706ca",
+        "android_client_info": {
+          "package_name": "com.diplomate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1051014026822-hl117b3btrj8fnakv4e5qaa0h117ubnm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVVqNyfd6Lf2GrxMSJc-bk7L_k5K5MOn8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1051014026822-hl117b3btrj8fnakv4e5qaa0h117ubnm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
