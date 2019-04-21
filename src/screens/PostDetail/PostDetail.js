@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, ScrollView, Button } from 'react-native';
+import { View, Text, Image, ScrollView, Button, Share, TouchableOpacity } from 'react-native';
 const Realm = require('realm');
 
 import HTML from 'react-native-render-html';
@@ -20,6 +20,10 @@ class PostDetailScreen extends Component {
     };
     realm = new Realm({ path: 'PostDatabase.realm' });
   }
+
+  static navigatorStyle = {
+    tabBarHidden: true
+  };
 
 
   fetchData(itemsRef) {
@@ -70,6 +74,7 @@ class PostDetailScreen extends Component {
           content: this.props.selectedPost.content.rendered,
           image: this.props.selectedPost._embedded['wp:featuredmedia'][0].media_details.sizes.full.source_url,
           date: this.props.selectedPost.date_gmt,
+          link: this.props.selectedPost.link,
         });
       }
     });
@@ -96,6 +101,16 @@ class PostDetailScreen extends Component {
     console.log(this.state.saved);
   };
 
+  sharePost= () => {
+    Share.share({
+      title: this.props.selectedPost.title.rendered,
+      url : this.props.selectedPost.link,
+      message: this.props.selectedPost.link
+    },{
+      dialogTitle: this.props.selectedPost.title.rendered
+    })
+  };
+
   itemSelectedHandler = key => {
     const selPost = this.state.posts.find(post => {
       return post.id === key;
@@ -111,10 +126,6 @@ class PostDetailScreen extends Component {
   };
 
   render () {
-    // console.log(this.state.realm);
-    // const info = this.state.realm
-    // ? 'Number of posts in this Realm: ' + this.state.realm.objects('Post').length
-    // : 'Loading...';
     let fetched =
     <View>
       <View>
@@ -135,36 +146,45 @@ class PostDetailScreen extends Component {
 
     return (
       <ScrollView>
-      <View>
-      <View>
-      <Icon
-      name="ios-bookmark"
-      size={30}
-      color={this.state.colorIcon}
-      onPress={() => saved
-        ?this.removeBookmark()
-        :this.addBookmark()}/>
-        </View>
         <View>
-        <Image
-        source={{uri: this.props.selectedPost._embedded['wp:featuredmedia'][0].media_details.sizes.full.source_url}}
-        style={{width: 100, height: 100}}
-        />
-        </View>
-        <View>
-        <Text>
-        Publié le {Moment(published).format('d MMM YYYY')} par le {this.props.selectedPost._embedded.author[0].name}
-        </Text>
-        </View>
-        <View>
-        <HTML html={this.props.selectedPost.title.rendered}/>
-        </View>
-        <View>
-        <HTML html={this.props.selectedPost.content.rendered}/>
-        </View>
+          <View>
+            <Icon
+              name="ios-bookmark"
+              size={30}
+              color={this.state.colorIcon}
+              onPress={() => saved
+                ?this.removeBookmark()
+                :this.addBookmark()}
+            />
+            <TouchableOpacity onPress={this.sharePost}>
+              <View>
+                <Icon
+                  name="ios-share"
+                  size={30}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <Image
+              source={{uri: this.props.selectedPost._embedded['wp:featuredmedia'][0].media_details.sizes.full.source_url}}
+              style={{width: 100, height: 100}}
+            />
+          </View>
+          <View>
+            <Text>
+            Publié le {Moment(published).format('d MMM YYYY')} par le {this.props.selectedPost._embedded.author[0].name}
+            </Text>
+          </View>
+          <View>
+            <HTML html={this.props.selectedPost.title.rendered}/>
+          </View>
+          <View>
+            <HTML html={this.props.selectedPost.content.rendered}/>
+          </View>
         </View>
         {readMore}
-        </ScrollView>
+      </ScrollView>
       );
     }
   }

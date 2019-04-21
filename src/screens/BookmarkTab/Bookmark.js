@@ -3,6 +3,7 @@ import { Text, View, Button, TouchableOpacity } from 'react-native';
 const Realm = require('realm');
 
 import { ListView } from 'realm/react-native';
+import HTML from 'react-native-render-html';
 
 
 
@@ -11,11 +12,22 @@ let realm = new Realm({ path: 'PostDatabase.realm' });
 class BookmarkScreen extends Component {
   constructor(props) {
     super(props);
+    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
     this.state = {
           dataSource: new ListView.DataSource({
             rowHasChanged: (row1, row2) => row1 !== row2,
           })
       };
+  }
+
+  onNavigatorEvent = event => {
+      if (event.type === "NavBarButtonPress") {
+          if (event.id === "sideDrawerToggle") {
+              this.props.navigator.toggleDrawer({
+                  side: "left"
+              });
+          }
+      }
   }
 
    fetchData(itemsRef) {
@@ -69,7 +81,8 @@ class BookmarkScreen extends Component {
           "author": [{"name": "lediplomate"}],
         },
         date_gmt: final[0].date,
-        categories: [75]
+        categories: [75],
+        link: final[0].link
      }
 
      console.log(selPost);
@@ -94,17 +107,22 @@ class BookmarkScreen extends Component {
     render () {
         return (
             <View>
-              <ListView
-                dataSource={this.state.dataSource}
-                renderRow={rowData => (
-                  <TouchableOpacity onPress={() => this.itemSelectedHandler(rowData.id)}>
-                    <View style={{ backgroundColor: 'white', padding: 20 }}>
-                      <Text>Name: {rowData.name}</Text>
-                      <Button title="delete" onPress={() => this.delete_Post(rowData.id)} />
-                    </View>
-                  </TouchableOpacity>
-                )}
-            />
+              {this.state.dataSource._cachedRowCount > 0 // condition
+                ? // if true
+                <ListView
+                  dataSource={this.state.dataSource}
+                  renderRow={rowData => (
+                    <TouchableOpacity onPress={() => this.itemSelectedHandler(rowData.id)}>
+                      <View style={{ backgroundColor: 'white', padding: 20 }}>
+                        <HTML html={rowData.name}/>
+                        <Button title="delete" onPress={() => this.delete_Post(rowData.id)} />
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                />
+                : // if false
+                <Text>Les postes que vous avez enregistrés apparaitront ici</Text>
+              }
             </View>
         );
     }

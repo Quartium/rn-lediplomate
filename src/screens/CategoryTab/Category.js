@@ -4,6 +4,7 @@ import { View, Text, Button, ScrollView, TouchableOpacity } from 'react-native';
 class CategoryScreen extends Component {
   constructor(props) {
     super(props);
+    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
     this.state = {
       categories: {
         editorial: {id: 29, name: "Editorial"},
@@ -14,6 +15,16 @@ class CategoryScreen extends Component {
         vieDiplomatique: {id: 12, name: "Vie diplomatique"}
       }
     };
+  }
+
+  onNavigatorEvent = event => {
+      if (event.type === "NavBarButtonPress") {
+          if (event.id === "sideDrawerToggle") {
+              this.props.navigator.toggleDrawer({
+                  side: "left"
+              });
+          }
+      }
   }
 
   itemSelectedHandler = key => {

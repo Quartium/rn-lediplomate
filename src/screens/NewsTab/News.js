@@ -7,9 +7,20 @@ import PostList from "../../components/PostList/PostList";
 class NewsScreen extends Component {
   constructor(props) {
     super(props);
+    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
     this.state = {
       posts: [],
     };
+  }
+
+  onNavigatorEvent = event => {
+      if (event.type === "NavBarButtonPress") {
+          if (event.id === "sideDrawerToggle") {
+              this.props.navigator.toggleDrawer({
+                  side: "left"
+              });
+          }
+      }
   }
 
   componentDidMount() {
@@ -85,7 +96,8 @@ class NewsScreen extends Component {
       title: selPost.name,
       passProps: {
         selectedPost: selPost
-      }
+      },
+      tabBarVisible: false,
     });
   };
 

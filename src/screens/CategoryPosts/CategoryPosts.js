@@ -12,6 +12,10 @@ class CategoryPostsScreen extends Component {
     };
   }
 
+  static navigatorStyle = {
+    tabBarHidden: true
+  };
+
   componentDidMount() {
     const catId = this.props.selectedCategory.id;
     fetch('https://www.lediplomate.tn/wp-json/wp/v2/posts?categories='+catId+'&_embed')
