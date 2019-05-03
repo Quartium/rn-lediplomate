@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
-import { ListItem, SearchBar } from 'react-native-elements';
+import { View, FlatList, ActivityIndicator, Platform, StyleSheet } from 'react-native';
+import { SearchBar } from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import ListPosts from "../../components/ListPosts/ListPosts";
+
+const NAVBAR_HEIGHT = 64;
+const STATUS_BAR_HEIGHT = Platform.select({ ios: 20, android: 24 });
 
 class SearchScreen extends Component {
   constructor(props) {
@@ -10,6 +15,10 @@ class SearchScreen extends Component {
       this.state = { isLoading: true, text: '' };
       this.arrayholder = [];
     }
+
+    static navigatorStyle = {
+      navBarHidden: true
+    };
 
     componentDidMount() {
       return fetch('https://www.lediplomate.tn/wp-json/wp/v2/posts?filter[posts_per_page]=5&_embed')
@@ -52,10 +61,10 @@ class SearchScreen extends Component {
       return (
         <View
         style={{
+          alignSelf:'center',
           height: 1,
           width: '86%',
-          backgroundColor: '#CED0CE',
-          marginLeft: '14%',
+          backgroundColor: '#dedede',
         }}
         />
       );
@@ -64,12 +73,19 @@ class SearchScreen extends Component {
     renderHeader = () => {
      return (
        <SearchBar
-         placeholder="Type Here..."
+         placeholder="Rechercher.."
          lightTheme
          round
          onChangeText={text => this.searchFilterFunction(text)}
          autoCorrect={false}
          value={this.state.text}
+         searchIcon={<Ionicons
+           name="ios-search"
+           color="#192444"
+           size={25}/>}
+         inputStyle={styles.SearchBarInputStyle}
+         containerStyle={styles.SearchBarContainer}
+         inputContainerStyle={styles.SearchBarInputContainer}
        />
      );
    };
@@ -92,33 +108,53 @@ class SearchScreen extends Component {
     };
 
     render() {
-      if (this.state.loading) {
+      if (this.state.isLoading) {
        return (
-         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+         <View style={styles.ActivityIndicatorStyle}>
            <ActivityIndicator />
          </View>
        );
       }
       return (
-        //ListView to show with textinput used as search bar
-        <View style={{ flex: 1 }}>
-          <FlatList
-            data={this.state.dataSource}
-            renderItem={({ item }) => (
-              <ListItem
-                leftAvatar={{ source: { uri: item._embedded['wp:featuredmedia'][0].media_details.sizes.full.source_url } }}
-                title={item.title.rendered}
-                onPress={() => this.itemSelectedHandler(item.id)}
-              />
-            )}
-            keyExtractor={item => (item.id).toString()}
-            ItemSeparatorComponent={this.renderSeparator}
-            ListHeaderComponent={this.renderHeader}
-            enableEmptySections={true}
+        <View style={styles.ListViewContainerStyle}>
+          <ListPosts
+            posts={this.state.dataSource}
+            renderSeparator={this.renderSeparator}
+            renderHeader={this.renderHeader}
+            onItemSelected={this.itemSelectedHandler}
           />
         </View>
       );
     }
   }
+
+  const styles = StyleSheet.create({
+    SearchBarContainer: {
+      height: NAVBAR_HEIGHT,
+      backgroundColor: 'transparent',
+      borderBottomWidth: 0,
+      margin:'2.5%'
+    },
+    SearchBarInputContainer: {
+      backgroundColor:'white',
+      borderRadius: 0,
+      paddingLeft: '2.5%'
+    },
+    SearchBarInputStyle: {
+      fontFamily: 'Rajdhani-Medium',
+      fontSize:16
+    },
+    ListViewContainerStyle: {
+      flex: 1,
+      backgroundColor:'#F3F2F2'
+    },
+    ActivityIndicatorStyle:{
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor:'#F3F2F2'
+    },
+  });
+
 
 export default SearchScreen;

@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, Image, FlatList, ScrollView } from 'react-native';
+import { View, Text, Image, ScrollView, StyleSheet, FlatList, TouchableOpacity,ActivityIndicator } from 'react-native';
+import ImageOverlay from "react-native-image-overlay";
+import HTML from 'react-native-render-html';
+import Moment from "moment";
 
+
+import NavBar from "../../components/NavBar/NavBar";
 import PostList from "../../components/PostList/PostList";
-
+import ListPosts from "../../components/ListPosts/ListPosts";
+import Label from "../../components/Label/Label";
 
 class NewsScreen extends Component {
   constructor(props) {
@@ -10,8 +16,13 @@ class NewsScreen extends Component {
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
     this.state = {
       posts: [],
+      isLoading: true,
     };
   }
+
+  static navigatorStyle = {
+    navBarHidden: true
+  };
 
   onNavigatorEvent = event => {
       if (event.type === "NavBarButtonPress") {
@@ -22,6 +33,13 @@ class NewsScreen extends Component {
           }
       }
   }
+
+  toggleDrawer() {
+        this.props.navigator.toggleDrawer({
+            side: 'left',
+            animated: true
+        });
+    }
 
   componentDidMount() {
     const url= 'https://www.lediplomate.tn/wp-json/wp/v2';
@@ -57,28 +75,14 @@ class NewsScreen extends Component {
        var postsSuccessStory = res9;
        var postsStartups = res10;
        this.setState({
+         isLoading: false,
          posts:[postsMain,postsTunisie,postsMondeArabe,postsEurope,postsAmerique,
            postsAfrique,postsAsie,postsFiguresHistoriques,postsSuccessStory,postsStartups],
        })
      });
-
-    // fetch('https://www.lediplomate.tn/wp-json/wp/v2/posts/?filter[posts_per_page]=4&_embed')
-    // .then((response) => response.json())
-    // .then((responseJson) => {
-    //   this.setState({
-    //     posts:responseJson,
-    //   })
-    // })
-    // .catch((error) => {
-    // console.error(error);
-    // });
   }
 
   itemSelectedHandler = key => {
-    // const selPost = this.state.posts.find(post => {
-    //   return post.id === key;
-    // });
-
     const selItem = this.state.posts.filter((obj) => {
       for (let i = 0, length = obj.length; i < length; i++) {
         if (obj[i].id === key) {
@@ -101,12 +105,61 @@ class NewsScreen extends Component {
     });
   };
 
+  renderSeparator = () => {
+    //Item sparator view
+    return (
+      <View
+      style={{
+        alignSelf:'center',
+        height: 1,
+        width: '86%',
+        backgroundColor: '#dedede',
+      }}
+      />
+    );
+  };
+
   render () {
     console.log(this.state.posts);
     main = (
-      <PostList
-        posts={this.state.posts[0]}
-        onItemSelected={this.itemSelectedHandler}
+      <FlatList
+        data={this.state.posts[0]}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        scrollEventThrottle={1}
+        renderItem={(info) => (
+          <View style={styles.ImageOverlay}>
+            <TouchableOpacity onPress={() => this.itemSelectedHandler(info.item.id)}>
+              <View>
+                <ImageOverlay
+                  source={{ uri: info.item._embedded['wp:featuredmedia'][0].media_details.sizes.full.source_url }}
+                  rounded={5}
+                  height={200}
+                  overlayColor="black"
+                  overlayAlpha={0.35}
+                  contentPosition="center"
+                  containerStyle={styles.containerStyle}>
+                  <View style={styles.containerDetails}>
+                    <View style={{alignSelf:'flex-start', marginBottom: 10, marginLeft: 10, marginRight: 10}}>
+                      <Text style={{color: 'white', fontFamily:'Rajdhani-Regular'}}>À la une</Text>
+                      <HTML
+                        html={info.item.title.rendered}
+                        baseFontStyle={{
+                          color:'white',
+                          fontFamily: 'Montserrat-Bold',
+                          color:'white',
+                          fontSize:13
+                        }}
+                      />
+                      <Text style={{color:'white', fontFamily:'CrimsonText-SemiBold', fontSize:14}}>Publié le {Moment(info.item.date_gmt).format('d MMM YYYY')}</Text>
+                    </View>
+                  </View>
+                </ImageOverlay>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+        keyExtractor={(info,index) => (info.id).toString()}
       />
     );
 
@@ -118,8 +171,9 @@ class NewsScreen extends Component {
     );
 
     mondeArabe = (
-      <PostList
+      <ListPosts
         posts={this.state.posts[2]}
+        renderSeparator={this.renderSeparator}
         onItemSelected={this.itemSelectedHandler}
       />
     );
@@ -132,8 +186,9 @@ class NewsScreen extends Component {
     );
 
     ameriques = (
-      <PostList
+      <ListPosts
         posts={this.state.posts[4]}
+        renderSeparator={this.renderSeparator}
         onItemSelected={this.itemSelectedHandler}
       />
     );
@@ -146,8 +201,9 @@ class NewsScreen extends Component {
     );
 
     asie = (
-      <PostList
+      <ListPosts
         posts={this.state.posts[6]}
+        renderSeparator={this.renderSeparator}
         onItemSelected={this.itemSelectedHandler}
       />
     );
@@ -160,8 +216,9 @@ class NewsScreen extends Component {
     );
 
     successStory = (
-      <PostList
+      <ListPosts
         posts={this.state.posts[8]}
+        renderSeparator={this.renderSeparator}
         onItemSelected={this.itemSelectedHandler}
       />
     );
@@ -173,97 +230,94 @@ class NewsScreen extends Component {
       />
     );
 
+    if (this.state.isLoading) {
+     return (
+       <View style={styles.ActivityIndicatorStyle}>
+         <ActivityIndicator />
+       </View>
+     );
+    }
     return (
-      <View>
-      <ScrollView>
-        <View>
-          <View>
-            <Text>À la une</Text>
+      <View style={styles.fill}>
+        <ScrollView>
+          <View style={{marginTop:90, marginLeft:'5%'}}>
+            {main}
           </View>
-          {main}
-        </View>
-        <View>
-          <View>
-            <Text>Tunisie</Text>
+          <View style={{backgroundColor:'white', elevation:2}}>
+            <Label name="Tunisie" />
+            {tunisie}
           </View>
-          {tunisie}
-        </View>
-        <View>
-          <View>
-            <Text>Monde Arabe</Text>
+          <View style={{marginBottom:20}}>
+            <Label name="Monde Arabe" />
+            {mondeArabe}
           </View>
-          {mondeArabe}
-        </View>
-        <View>
-          <View>
-            <Text>Europe</Text>
+          <View style={{backgroundColor:'white', elevation:2}}>
+            <Label name="Europe" />
+            {europe}
           </View>
-          {europe}
-        </View>
-        <View>
-          <View>
-            <Text>Ameriques</Text>
+          <View style={{marginBottom:20}}>
+            <Label name="Ameriques" />
+            {ameriques}
           </View>
-          {ameriques}
-        </View>
-        <View>
-          <View>
-            <Text>Afrique</Text>
+          <View style={{backgroundColor:'white', elevation:2}}>
+            <Label name="Afrique" />
+            {afrique}
           </View>
-          {afrique}
-        </View>
-        <View>
-          <View>
-            <Text>Asie</Text>
+          <View style={{marginBottom:20}}>
+            <Label name="Asie" />
+            {asie}
           </View>
-          {asie}
-        </View>
-        <View>
-          <View>
-            <Text>Figures Historiques</Text>
+          <View style={{backgroundColor:'white', elevation:2}}>
+            <Label name="Figures Historiques" />
+            {figuresHistoriques}
           </View>
-          {figuresHistoriques}
-        </View>
-        <View>
-          <View>
-            <Text>Success Story</Text>
+          <View style={{marginBottom:20}}>
+            <Label name="Success Story" />
+            {successStory}
           </View>
-          {successStory}
-        </View>
-        <View>
-          <View>
-            <Text>Startups</Text>
+          <View style={{backgroundColor:'white', elevation:2}}>
+            <Label name="Startups" />
+            {startups}
           </View>
-          {startups}
-        </View>
-      </ScrollView>
+        </ScrollView>
+        <NavBar
+          Title="Accueil"
+          Icon="ios-menu"
+          customIconStyle= "#192444"
+          onItemPressed={() => this.toggleDrawer()}
+        />
       </View>
     );
-
-    // const postImage = this._embedded['wp:featuredmedia'][0].media_details.sizes.full.source_url;
-    // console.log(postImage);
-    // if (this.state.isLoading==true) {
-    //   return(
-    //     <View>
-    //       <Text>isLoading</Text>
-    //     </View>
-    //   )
-    // }else{
-    //   return (
-    //     <FlatList
-    //       onEndReachedThreshold="0"
-    //       data={this.state.posts}
-    //       renderItem={( item ) => (
-    //         <View>
-    //           <Text>{item.title.rendered}</Text>
-    //           <Image source={{uri: item._embedded['wp:featuredmedia'][0].media_details.sizes.full.source_url}}/>
-    //         </View>
-    //       )}
-    //       keyExtractor={(item,index) => (item.id).toString()}
-    //     />
-    //   )
-    // }
   }
 }
+
+const styles = StyleSheet.create({
+  fill: {
+    flex: 1,
+    backgroundColor: "#F3F2F2",
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ImageOverlay: {
+    width: 250,
+  },
+  containerStyle: {
+    width: '95%',
+    marginBottom: 30,
+  },
+  containerDetails: {
+    flex: 1,
+    flexDirection: 'column-reverse',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    alignSelf:'flex-start'
+  },
+  ActivityIndicatorStyle:{
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor:'#F3F2F2'
+  },
+});
 
 export default NewsScreen;

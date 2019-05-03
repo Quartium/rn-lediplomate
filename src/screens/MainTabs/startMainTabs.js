@@ -1,13 +1,17 @@
 import { Navigation } from 'react-native-navigation';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import IconFoundation from 'react-native-vector-icons/Foundation';
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const startTabs = () => {
     Promise.all([
-        Icon.getImageSource("ios-book", 30),
-        Icon.getImageSource("md-journal", 30),
-        Icon.getImageSource("ios-search", 30),
-        Icon.getImageSource("ios-bookmark", 30),
-        Icon.getImageSource("ios-menu", 30)
+        Ionicons.getImageSource("md-home", 30),
+        IconEntypo.getImageSource("grid", 30),
+        IconFoundation.getImageSource("torsos-all", 30),
+        Ionicons.getImageSource("ios-search", 30),
+        Ionicons.getImageSource("ios-heart", 30),
+        Ionicons.getImageSource("ios-menu", 30)
     ]).then(sources => {
         Navigation.startTabBasedApp({
             tabs: [
@@ -18,7 +22,7 @@ const startTabs = () => {
                     navigatorButtons: {
                       leftButtons: [
                         {
-                          icon: sources[4],
+                          icon: sources[5],
                           title: "Menu",
                           id: "sideDrawerToggle"
                         }
@@ -32,7 +36,21 @@ const startTabs = () => {
                     navigatorButtons: {
                       leftButtons: [
                         {
-                          icon: sources[4],
+                          icon: sources[5],
+                          title: "Menu",
+                          id: "sideDrawerToggle"
+                        }
+                      ]
+                    }
+                },
+                {
+                    screen: "diplomate.PoliticsScreen",
+                    title: "Partis Politiques",
+                    icon: sources[2],
+                    navigatorButtons: {
+                      leftButtons: [
+                        {
+                          icon: sources[5],
                           title: "Menu",
                           id: "sideDrawerToggle"
                         }
@@ -42,16 +60,16 @@ const startTabs = () => {
                 {
                     screen: "diplomate.SearchScreen",
                     title: "Recherche",
-                    icon: sources[2],
+                    icon: sources[3],
                 },
                 {
                     screen: "diplomate.BookmarkScreen",
                     title: "Bookmark",
-                    icon: sources[3],
+                    icon: sources[4],
                     navigatorButtons: {
                       leftButtons: [
                         {
-                          icon: sources[4],
+                          icon: sources[5],
                           title: "Menu",
                           id: "sideDrawerToggle"
                         }

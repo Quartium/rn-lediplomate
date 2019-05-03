@@ -7,6 +7,7 @@ import HomeScreen from "./src/screens/Landing/Landing";
 import NewsScreen from "./src/screens/NewsTab/News";
 import CategoryScreen from "./src/screens/CategoryTab/Category";
 import CategoryPostsScreen from "./src/screens/CategoryPosts/CategoryPosts";
+import PoliticsScreen from './src/screens/PoliticsTab/Politics';
 import SearchScreen from "./src/screens/SearchTab/Search";
 import BookmarkScreen from "./src/screens/BookmarkTab/Bookmark";
 import PostDetailScreen from "./src/screens/PostDetail/PostDetail";
@@ -36,6 +37,11 @@ Navigation.registerComponent(
 Navigation.registerComponent(
   "diplomate.CategoryPostsScreen",
   () => CategoryPostsScreen,
+);
+
+Navigation.registerComponent(
+  "diplomate.PoliticsScreen",
+  () => PoliticsScreen,
 );
 
 Navigation.registerComponent(
