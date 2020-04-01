@@ -2,7 +2,7 @@
 
 A mobile application built using React Native.
 
-![screenshots of example app](/images/screenshots@2x.png)
+![screenshots of example app](/images/screenshots@2x.jpg)
 
 ## Features
 
